@@ -1,0 +1,9 @@
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sns-topic.html
+Resources:
+  MySNSTopic:
+    Type: AWS::SNS::Topic
+    Properties: 
+      Subscription:
+      - Endpoint: <INSIRA AQUI O ARN DA FILA SQS>
+        Protocol: "sqs"
+      TopicName: "OrdersTopic"

@@ -1,0 +1,13 @@
+Resources: 
+  myLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: "python3.7"
+      FunctionName: "simple_ingestion"
+      Role: <INSIRA AQUI O ARN DA ROLE QUE TEM PERMISSAO PARA MANIPUALR O DYNAMODB E SQS>
+      Handler: "func_lambda.lambda_handler"
+      Code:
+        S3Bucket: "cloudformationtesttopic69"
+        S3Key: "func_lambda.zip"
+      Timeout: 5
+      

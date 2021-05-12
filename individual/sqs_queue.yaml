@@ -1,0 +1,12 @@
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html
+Description: "Create a simple queue"
+Resources: 
+  MyQueue: 
+    Type: AWS::SQS::Queue
+    Properties: 
+      DelaySeconds: 0
+      MaximumMessageSize: 262144
+      MessageRetentionPeriod: 150000
+      QueueName: "OrdersQueue"
+      ReceiveMessageWaitTimeSeconds: 0
+      VisibilityTimeout: 30

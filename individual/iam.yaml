@@ -1,0 +1,26 @@
+Resources:
+  DynamoSQSAcess:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: "Da acesso ao DynamoDB e a SQS"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: "SQSDynamo"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - "SQS:ReceiveMessage"
+                  - "dynamodb:PutItem"
+                Resource: '*'
+      RoleName: "SqsDynamoAcess"
+      

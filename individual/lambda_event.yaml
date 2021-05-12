@@ -1,0 +1,6 @@
+Resources:
+  triggerLambda:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: <INSIRA AQUI O ARN DA FILA SQS>
+      FunctionName: <INSIRA AQUI O ARN DA FUNÇÃO LAMBDA>
