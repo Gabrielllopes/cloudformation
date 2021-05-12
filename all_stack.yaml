@@ -1,0 +1,78 @@
+Resources:
+  # Cria uma role com as permissões de acesso
+  DynamoSQSAcess:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: "Da acesso ao DynamoDB e a SQS"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: "SQSDynamo"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - "SQS:*"
+                  - "dynamodb:PutItem"
+                Resource: '*'
+      RoleName: "SqsDynamoAcess"
+  # Cria fila SQS 
+  MyQueue: 
+    Type: AWS::SQS::Queue
+    Properties: 
+      DelaySeconds: 0
+      MaximumMessageSize: 262144
+      MessageRetentionPeriod: 150000
+      QueueName: "OrdersQueue"
+      ReceiveMessageWaitTimeSeconds: 0
+      VisibilityTimeout: 30
+  # Cria topico SNS
+  MySNSTopic:
+    Type: AWS::SNS::Topic
+    Properties: 
+      Subscription:
+      - Endpoint: !GetAtt MyQueue.Arn
+        Protocol: "sqs"
+      TopicName: "OrdersTopic"
+  # Cria tabela DynamoDB
+  MyDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: "orders"
+      AttributeDefinitions: 
+        - 
+          AttributeName: "id"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "id"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+  # Cria função lambda 
+  MyLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: "python3.7"
+      FunctionName: "simple_ingestion"
+      Role: !GetAtt DynamoSQSAcess.Arn
+      Handler: "func_lambda.lambda_handler"
+      Code:
+        S3Bucket: "cloudformationtesttopic69"
+        S3Key: "func_lambda.zip"
+      Timeout: 5
+  # Cria Trigger Lambda
+  TriggerLambda:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: !GetAtt MyQueue.Arn
+      FunctionName: !GetAtt MyLambda.Arn
